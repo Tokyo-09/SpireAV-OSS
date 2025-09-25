@@ -1,0 +1,14 @@
+[Unit]
+Description=SpireAV Engine
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/spire
+RuntimeDirectory=spire
+RuntimeDirectoryMode=0750
+User=root
+Group=spire
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

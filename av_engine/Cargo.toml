@@ -1,0 +1,15 @@
+[package]
+name = "av_engine"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+log = { workspace = true }
+rusqlite = { workspace = true }
+indicatif = { workspace = true }
+chrono = { workspace = true }
+
+notify = "8.2.0"
+
+av_core = { path = "../av_core" }
