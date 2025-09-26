@@ -218,7 +218,7 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
 name = "av_core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "chrono",
@@ -244,7 +244,7 @@ dependencies = [
 
 [[package]]
 name = "av_engine"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "av_core",
@@ -257,7 +257,7 @@ dependencies = [
 
 [[package]]
 name = "av_managment_console"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "color-eyre",
  "crossterm 0.29.0",
@@ -266,7 +266,7 @@ dependencies = [
 
 [[package]]
 name = "av_tui"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "color-eyre",
  "crossterm 0.29.0",
@@ -3599,7 +3599,7 @@ checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
 
 [[package]]
 name = "spire"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "av_core",
@@ -3613,7 +3613,7 @@ dependencies = [
 
 [[package]]
 name = "spired"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "av_core",

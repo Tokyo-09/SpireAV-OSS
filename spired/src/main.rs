@@ -25,14 +25,16 @@ pub struct Config {
     excluded_paths: Vec<PathBuf>,
     excluded_extensions: Vec<String>,
     excluded_files: Vec<String>,
-    _excluded_processes: Vec<String>,
+    // _excluded_processes: Vec<String>,
 }
 
 fn main() -> anyhow::Result<()> {
+    /*
     #[cfg(target_os = "linux")]
     if !Uid::effective().is_root() {
         anyhow::bail!("You must run this executable with root permissions");
     }
+     */
 
     let ip = String::from("http://127.0.0.1:8080");
 
@@ -107,13 +109,21 @@ fn monitor_directory(conn: &Connection) -> anyhow::Result<()> {
         dirs::video_dir(),
     ];
 
+    debug!("monitoring: {:?}", directories);
+
     // Добавляем каждую директорию в watcher
     for dir in directories {
         match dir {
             Some(path) => {
                 if path.exists() {
-                    watcher.watch(&path, RecursiveMode::Recursive)?;
-                    info!("Monitoring directory: {}", path.display());
+                    match watcher.watch(&path, RecursiveMode::Recursive) {
+                        Ok(_) => info!("Monitoring directory: {}", path.display()),
+                        Err(e) => error!(
+                            "Failed to watch directory {}: {} (continuing without it)",
+                            path.display(),
+                            e
+                        ),
+                    }
                 } else {
                     debug!("Directory does not exist, skipping: {}", path.display());
                 }
@@ -138,8 +148,10 @@ fn monitor_directory(conn: &Connection) -> anyhow::Result<()> {
                             if should_monitor_path(parent, &config)
                                 && should_monitor_path(&file_path, &config)
                             {
-                                info!("Detected change in file: {}", file_path.display());
-                                SpireAvScanner::scan_single_file(conn, file_path)?;
+                                info!("Detected change in file: {:?}", file_path);
+                                if let Err(e) = SpireAvScanner::scan_single_file(conn, file_path) {
+                                    error!("Error scanning file  {}", e)
+                                }
                             } else {
                                 debug!(
                                     "Skipping file in unmonitored directory: {}",

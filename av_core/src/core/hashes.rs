@@ -16,17 +16,17 @@ impl Hasher {
         }
 
         // Implement This To All Types Of Scan
-        let metadata = file.metadata()?;
+        let metadata = file
+            .metadata()
+            .map_err(|e| anyhow::anyhow!("Failed to get metadata for {}: {}", file.display(), e))?;
 
-        if !metadata.is_file() {
-            log::warn!("Skipping empty file: {}", file.display());
-        }
         if metadata.len() == 0 {
             log::warn!("Skipping empty file: {}", file.display());
             return Ok(("".to_string(), "".to_string())); // Or return an error
         }
         if metadata.len() > 1_000_000_000 {
-            log::warn!("Skipping hude file: {}", file.display());
+            log::warn!("Skipping huge file (over 1GB): {}", file.display());
+            anyhow::bail!("File too large to hash: {}", file.display());
         }
 
         let mut file = File::open(&file)?;
