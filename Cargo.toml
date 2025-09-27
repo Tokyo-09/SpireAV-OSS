@@ -4,7 +4,8 @@ members = [
     "av_core",
     "av_engine",
     "av_managment_console",
-    "av_tui", "spired",
+    "av_tui",
+    "spired",
 ]
 resolver = "2"
 

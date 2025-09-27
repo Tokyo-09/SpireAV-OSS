@@ -10,7 +10,7 @@ use rusqlite::Connection;
 use serde::Deserialize;
 use std::{path::PathBuf, sync::mpsc::channel, time::Duration};
 
-use nix::unistd::Uid;
+// use nix::unistd::Uid;
 
 use crate::{
     commands::Cli,
@@ -34,7 +34,7 @@ fn main() -> anyhow::Result<()> {
     if !Uid::effective().is_root() {
         anyhow::bail!("You must run this executable with root permissions");
     }
-     */
+    */
 
     let ip = String::from("http://127.0.0.1:8080");
 
@@ -90,7 +90,6 @@ fn monitor_directory(conn: &Connection) -> anyhow::Result<()> {
         NotifyConfig::default().with_poll_interval(Duration::from_secs(1)),
     )?;
 
-    // Список директорий для мониторинга
     let directories = vec![
         dirs::home_dir(),
         dirs::audio_dir(),
@@ -111,7 +110,6 @@ fn monitor_directory(conn: &Connection) -> anyhow::Result<()> {
 
     debug!("monitoring: {:?}", directories);
 
-    // Добавляем каждую директорию в watcher
     for dir in directories {
         match dir {
             Some(path) => {

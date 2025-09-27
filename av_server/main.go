@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	CertFilePath = "/home/user/server-cert.pem"
-	KeyFilePath  = "/home/user/server-key.pem"
+	CertFilePath = "./server.ecdsa.crt"
+	KeyFilePath  = "./server.ecdsa.key"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 		Certificates: []tls.Certificate{serverTLSCert},
 	}
 	server := http.Server{
-		Addr:      ":8080",
+		Addr:      ":8081",
 		Handler:   http.HandlerFunc(httpRequestHandler),
 		TLSConfig: tlsConfig,
 	}

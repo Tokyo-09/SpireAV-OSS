@@ -22,6 +22,7 @@ use std::{
 use indicatif::{ProgressBar, ProgressStyle};
 use log::{debug, error, info};
 use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
+use notify_rust::{Notification, Timeout};
 use rusqlite::Connection;
 use walkdir::WalkDir;
 use yara_x::Scanner as yara_Scanner;
@@ -90,6 +91,18 @@ impl SpireAvScanner {
                     "Quarantined file {} (MD5: {}, SHA256: {}, entropy: {})",
                     malware.name, malware.md5hash, malware.sha256hash, entropy
                 );
+
+                Notification::new()
+                .summary("Spire AV: Threat Detected")  // Заголовок
+                .body(&format!(
+                    "File: {:?}\nMalware: {}\nMD5: {}\nSHA256: {}\nEntropy: {}\nQuarantined successfully.",
+                    path_display, malware.name, malware.md5hash, malware.sha256hash, entropy
+                ))
+                .icon("dialog-warning")  
+                .appname("Spire AV") 
+                .timeout(Timeout::Milliseconds(10000))
+                .show()?;
+
                 Ok(ScanResult::Threat {
                     path: file_path,
                     malware,
@@ -165,6 +178,15 @@ impl SpireAvScanner {
                                 "Quarantined file {} (MD5: {}, SHA256: {}, entropy: {})",
                                 malware.name, malware.md5hash, malware.sha256hash, entropy
                             ));
+                            Notification::new().summary("Spire AV: Threat Detected")  // Заголовок
+                            .body(&format!(
+                    "File: {:?}\nMalware: {}\nMD5: {}\nSHA256: {}\nEntropy: {}\nQuarantined successfully.",
+                    path_display, malware.name, malware.md5hash, malware.sha256hash, entropy
+                ))
+                .icon("dialog-warning")  
+                .appname("Spire AV") 
+                .timeout(Timeout::Milliseconds(10000))
+                .show()?;
                             results.push(ScanResult::Threat {
                                 path: entry.path().to_path_buf(),
                                 malware,
@@ -281,6 +303,16 @@ impl SpireAvScanner {
                                         path_display,
                                         matching_rules.join(", ")
                                     ));
+                                    Notification::new()
+                .summary("Spire AV: Threat Detected")  // Заголовок
+                .body(&format!(
+                    "File: {:?}\nMalware: {:?}\nMD5: \nQuarantined successfully.",
+                    path_display, matching_rules
+                ))
+                .icon("dialog-warning")  
+                .appname("Spire AV") 
+                .timeout(Timeout::Milliseconds(10000))
+                .show()?;
                                     results.push(ScanResult::YaraThreat {
                                         path: entry.path().to_path_buf(),
                                         matching_rules,
