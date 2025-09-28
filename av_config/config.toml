@@ -1,11 +1,16 @@
 spire_dir = ["~/.spire"]
 
-spire_db_path =  ["data/database.db"]
+spire_db_path = ["data/database.db"]
 
 yara_rules_path = ["yara_rules/yara"]
 
 # Исключённые пути
-excluded_paths = ["/root/.local/share/fish/", "/root/.spire", "/root/.spire/data/", "/root/.local/share/spire_quarantine/"]
+excluded_paths = [
+    "/root/.local/share/fish/",
+    "/root/.spire",
+    "/root/.spire/data/",
+    "/root/.local/share/spire_quarantine/",
+]
 
 # Исключённые расширения файлов
 excluded_extensions = ["log", "tmp", "bak", "db"]
@@ -14,3 +19,5 @@ excluded_extensions = ["log", "tmp", "bak", "db"]
 excluded_files = ["secret.txt", ".gitignore", "fish_history", ".bash_history"]
 
 excluded_processes = ["firefox", "chrome", "systemd"]
+
+telemetry = false

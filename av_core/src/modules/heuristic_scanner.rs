@@ -1,7 +1,10 @@
 use crate::{
-    core::scanner::{file_struct, obfuscation, strings},
+    core::scanner::{linux::file_struct_elf, shared::obfuscation, shared::strings},
     types::{FileData, HeuristicResult, HeuristicRule, Severity},
 };
+
+#[cfg(target_os = "windows")]
+use crate::core::scanner::win::file_struct_exe;
 
 pub struct SpireHeuristicEngine {
     rules: Vec<HeuristicRule>,
@@ -23,14 +26,14 @@ impl SpireHeuristicEngine {
                     name: "pe_rwx_section",
                     description: "Проверка наличия RWX-секций в PE-файле",
                     severity: Severity::High,
-                    check_fn: file_struct::scan_pe_structure,
+                    check_fn: file_struct_exe::scan_pe_structure,
                 },
                 #[cfg(target_os = "linux")]
                 HeuristicRule {
                     name: "elf_rwx_section",
                     description: "Проверка наличия RWX-секций в ELF-файле",
                     severity: Severity::High,
-                    check_fn: file_struct::scan_elf_structure,
+                    check_fn: file_struct_elf::scan_elf_structure,
                 },
                 HeuristicRule {
                     name: "xor_obfuscation",

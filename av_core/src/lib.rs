@@ -1,7 +1,7 @@
 use crate::{
     core::{
         config::Config as SpireConfig, db::ThreatDatabase, hashes::Hasher, models::ScanResult,
-        quarantine::Quarantine, scanner::entropy::calculate_entropy,
+        quarantine::Quarantine, scanner::shared::entropy::calculate_entropy,
     },
     modules::heuristic_scanner::SpireHeuristicEngine,
     types::{FileContainer, FileData, FileType, HeuristicResult},
@@ -178,13 +178,13 @@ impl SpireAvScanner {
                                 "Quarantined file {} (MD5: {}, SHA256: {}, entropy: {})",
                                 malware.name, malware.md5hash, malware.sha256hash, entropy
                             ));
-                            Notification::new().summary("Spire AV: Threat Detected")  // Заголовок
+                            Notification::new().summary("Spire AV: Threat Detected")
                             .body(&format!(
                     "File: {:?}\nMalware: {}\nMD5: {}\nSHA256: {}\nEntropy: {}\nQuarantined successfully.",
                     path_display, malware.name, malware.md5hash, malware.sha256hash, entropy
                 ))
-                .icon("dialog-warning")  
-                .appname("Spire AV") 
+                .icon("dialog-warning")
+                .appname("Spire AV")
                 .timeout(Timeout::Milliseconds(10000))
                 .show()?;
                             results.push(ScanResult::Threat {
@@ -358,7 +358,7 @@ impl SpireAvScanner {
         let engine = SpireHeuristicEngine::new();
 
         let file_path = path;
-        let bytes = std::fs::read(file_path).expect("unable read file");
+        let bytes = fs::read(file_path).expect("unable read file");
 
         // Parse the file
         let file_data = match parse_file(&bytes) {

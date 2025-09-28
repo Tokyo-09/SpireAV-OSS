@@ -4,12 +4,11 @@ version = "0.2.0"
 edition = "2024"
 
 [dependencies]
-anyhow = { workspace = true }
-log = { workspace = true }
-rusqlite = { workspace = true }
-indicatif = { workspace = true }
-chrono = { workspace = true }
+anyhow.workspace = true
+log.workspace = true
+rusqlite.workspace = true
+indicatif.workspace = true
+chrono.workspace = true
 
-notify = "8.2.0"
 
 av_core = { path = "../av_core" }
