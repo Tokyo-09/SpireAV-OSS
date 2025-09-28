@@ -1,23 +1,20 @@
-use av_core::{
-    SpireAvScanner,
-    core::{config::Config as SpireConfig, db::ThreatDatabase},
-};
+use av_core::core::{config::Config as SpireConfig, db::ThreatDatabase};
 use clap::Parser;
 use env_logger::Builder;
 use log::{LevelFilter, debug, error, info};
-use notify::{Config as NotifyConfig, Event, RecommendedWatcher, RecursiveMode, Watcher};
+use reqwest::Client;
 use rusqlite::Connection;
 use serde::Deserialize;
-use std::{path::PathBuf, sync::mpsc::channel, time::Duration};
+use serde_json::json;
+use std::path::PathBuf;
 
-use nix::unistd::Uid;
+// use nix::unistd::Uid;
 
-use crate::{
-    commands::Cli,
-    utils::{load_config, should_monitor_path},
-};
+use crate::{commands::Cli, monitor::monitor_directory, utils::load_config};
 
 pub mod commands;
+pub mod monitor;
+pub mod telemetry;
 pub mod utils;
 
 #[derive(Deserialize)]
@@ -25,13 +22,48 @@ pub struct Config {
     excluded_paths: Vec<PathBuf>,
     excluded_extensions: Vec<String>,
     excluded_files: Vec<String>,
-    _excluded_processes: Vec<String>,
+    telemetry: bool,
+    // _excluded_processes: Vec<String>,
 }
 
-fn main() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    /*
     #[cfg(target_os = "linux")]
     if !Uid::effective().is_root() {
         anyhow::bail!("You must run this executable with root permissions");
+    }
+    */
+
+    let config = load_config()?;
+
+    if config.telemetry {
+        info!("Telemetry enabled. Collecting and sending data...");
+
+        let telemetry_data = json!({
+            "app_version": "1.0.0",
+            "user_id": "example_user",
+            "timestamp": chrono::Utc::now().to_rfc3339(),
+            "metrics": {
+                "cpu_usage": 42.5,
+                "memory_usage": 128
+            }
+        });
+
+        let client = Client::new();
+        let response = client
+            .post("https://127.0.0.1/api/collect")
+            .json(&telemetry_data)
+            .send()
+            .await?;
+
+        if response.status().is_success() {
+            info!("Telemetry sent successfully.");
+        } else {
+            error!("Failed to send telemetry: {}", response.status());
+        }
+    } else {
+        info!("Telemetry disabled. No data will be collected or sent.");
     }
 
     let ip = String::from("http://127.0.0.1:8080");
@@ -71,92 +103,7 @@ fn main() -> anyhow::Result<()> {
     info!("Logging initialized to with level {:?}", log_level);
     log::debug!("Apps run in: {:?} mode", log_level);
 
-    monitor_directory(&conn)?;
-
-    Ok(())
-}
-
-fn monitor_directory(conn: &Connection) -> anyhow::Result<()> {
-    let config = load_config("./config.toml")?;
-
-    let (tx, rx) = channel();
-    let mut watcher = RecommendedWatcher::new(
-        move |res: notify::Result<Event>| {
-            debug!("Received filesystem event: {:?}", res);
-            let _ = tx.send(res);
-        },
-        NotifyConfig::default().with_poll_interval(Duration::from_secs(1)),
-    )?;
-
-    // Список директорий для мониторинга
-    let directories = vec![
-        dirs::home_dir(),
-        dirs::audio_dir(),
-        dirs::cache_dir(),
-        dirs::data_dir(),
-        dirs::config_local_dir(),
-        dirs::config_dir(),
-        dirs::document_dir(),
-        dirs::download_dir(),
-        dirs::executable_dir(),
-        dirs::picture_dir(),
-        dirs::preference_dir(),
-        dirs::public_dir(),
-        dirs::state_dir(),
-        dirs::template_dir(),
-        dirs::video_dir(),
-    ];
-
-    // Добавляем каждую директорию в watcher
-    for dir in directories {
-        match dir {
-            Some(path) => {
-                if path.exists() {
-                    watcher.watch(&path, RecursiveMode::Recursive)?;
-                    info!("Monitoring directory: {}", path.display());
-                } else {
-                    debug!("Directory does not exist, skipping: {}", path.display());
-                }
-            }
-            None => {
-                debug!("Directory not found, skipping");
-            }
-        }
-    }
-
-    info!("Starting event loop");
-    for res in rx {
-        debug!("Processing event: {:?}", res);
-        match res {
-            Ok(event) => {
-                debug!("Event kind: {:?}", event.kind);
-                if event.kind.is_create() || event.kind.is_modify() {
-                    for file_path in event.paths {
-                        debug!("Checking path: {}", file_path.display());
-                        if file_path.is_file() {
-                            let parent = file_path.parent().unwrap_or(&file_path);
-                            if should_monitor_path(parent, &config)
-                                && should_monitor_path(&file_path, &config)
-                            {
-                                info!("Detected change in file: {}", file_path.display());
-                                SpireAvScanner::scan_single_file(conn, file_path)?;
-                            } else {
-                                debug!(
-                                    "Skipping file in unmonitored directory: {}",
-                                    file_path.display()
-                                );
-                            }
-                        }
-                    }
-                } else {
-                    debug!("Ignoring event kind: {:?}", event.kind);
-                }
-            }
-            Err(e) => {
-                error!("Filesystem watch error: {}", e);
-            }
-        }
-    }
+    monitor_directory(&conn, config)?;
 
     Ok(())
 }

@@ -34,6 +34,7 @@ fn main() -> anyhow::Result<()> {
             unimplemented!("Not yet working");
         }
         Command::Quarantine { action } => engine.quarantine(action)?,
+        Command::PasswordManager { action } => unimplemented!("Not yet working {action:?}"),
         Command::UpdateDB { ip } => {
             m.println(format!("Database update not implemented: ip={ip:?}"))?;
             unimplemented!("Database update is not yet implemented");

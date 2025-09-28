@@ -34,4 +34,15 @@ pub enum Command {
         // Server ip address
         ip: Option<Ipv4Addr>,
     },
+    PasswordManager {
+        #[clap(subcommand)]
+        action: PasswordManagerAction,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+pub enum PasswordManagerAction {
+    List,
+    Add,
+    Remove { id: String },
 }

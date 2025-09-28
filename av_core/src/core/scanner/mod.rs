@@ -1,4 +1,3 @@
-pub mod entropy;
-pub mod file_struct;
-pub mod obfuscation;
-pub mod strings;
+pub mod linux;
+pub mod shared;
+pub mod win;

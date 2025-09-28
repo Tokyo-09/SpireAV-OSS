@@ -18,6 +18,8 @@ db/yara
 
 .idea/
 
+Cargo.lock
+
 server/certs
 server/keys
 # RustRover

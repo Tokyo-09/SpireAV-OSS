@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- v0.2 Heuristic_engine
-- v0.2 Init Av_managment_console module
+- v0.2 
+- v0.2 
 - v0.2
 - v0.2
 - v0.2

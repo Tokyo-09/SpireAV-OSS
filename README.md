@@ -16,16 +16,16 @@
 
 # Structure
 
-| Module    | Description                                                                                                                                                                                                                    |
-|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Av_core   | Provides the core functionality, real-time threat detection, scanning algorithms, and etc                                                                                           
-|spired | The spire daemon that monitor system                                            |
-| Av_cli    | The command-line interface                                                                                                                                                                                                     |
-| Av_gui    | The graphical user interface                                                                                                                                                                                                   |
-| Av_engine | Listens on a local Unix Domain Socket (UDS) or TCP localhost, accepts JSON/Protobuf commands, performs scanning, and returns the result. Runs as a service with the necessary privileges. Use gRPC to communicate with clients |
-| DB        | The sqlite database that stores threat signatures and definitions used for identifying malware                                                                                                                                 |
-| Av_Tui | The terminal user interface |
-| Av_managment_console | Administrators utility to control all connected antivirus clients (Enterpryce only) |
+| Module                | Description                                                                                                                                                                                                                    |
+|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Av_core               | Provides the core functionality, real-time threat detection, scanning algorithms, and etc                                                                                                                                      |
+| spired                | The spire daemon that monitor system                                                                                                                                                                                           |
+| Av_cli                | The command-line interface                                                                                                                                                                                                     |
+| Av_gui                | The graphical user interface                                                                                                                                                                                                   |
+| Av_engine             | Listens on a local Unix Domain Socket (UDS) or TCP localhost, accepts JSON/Protobuf commands, performs scanning, and returns the result. Runs as a service with the necessary privileges. Use gRPC to communicate with clients |
+| DB                    | The sqlite database that stores threat signatures and definitions used for identifying malware                                                                                                                                 |
+| Av_Tui                | The terminal user interface                                                                                                                                                                                                    |
+| Av_management_console | Administrators utility to control all connected antivirus clients (Enterprise only)                                                                                                                                            |
 
 
 
@@ -44,10 +44,10 @@
 * [ X ] Scan specified directories for threats
 * [ X ] Perform scans using YARA rules
 * [  ] Conduct behavioral analysis of files
-* [  ] Enable real-time monitor mode
+* [ X ] Enable real-time monitor mode
 * [  ] Add full disk scan
 * [  ] Implement TCP/IP filtering for malicious hosts and ports
-* [  ] Scan newly created files on disk for static Indicators of Compromise (IOCs)
+* [ X ] Scan newly created files on disk for static Indicators of Compromise (IOCs)
 * [  ] Analyze newly created files for Import Address Table (IAT) patterns
 * [  ] Execute files in a sandbox upon detection of an executable launching from the kernel
 * [  ] ...
